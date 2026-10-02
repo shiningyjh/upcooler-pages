@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Upcooler · 스레드 연결</title>
+<style>body{font-family:-apple-system,"Apple SD Gothic Neo",sans-serif;max-width:560px;margin:48px auto;padding:0 16px;color:#222;line-height:1.6}
+code{background:#f3f3f3;padding:2px 6px;border-radius:4px;word-break:break-all}</style></head>
+<body>
+<h2>스레드 연결</h2>
+<p id="msg">이 컴퓨터의 업쿨러로 연결 코드를 넘기는 중입니다…</p>
+<p id="fallback" style="display:none">자동으로 넘어가지 않으면, 업쿨러를 실행한 터미널에서 <code>threads.py --연결</code> 이 기다리고 있는지 확인하세요.</p>
+<script>
+// 메타가 돌려준 ?code=… 를 이 컴퓨터(127.0.0.1)에서 기다리는 업쿨러에 넘긴다. 이 페이지는 아무것도 저장하지 않는다.
+(function(){
+  var q = new URLSearchParams(location.search);
+  var err = q.get("error_description") || q.get("error");
+  if (err) { document.getElementById("msg").textContent = "연결이 취소됐거나 실패했습니다: " + err; return; }
+  var code = (q.get("code") || "").replace(/#_$/, "");
+  if (!code) { document.getElementById("msg").textContent = "연결 코드가 없습니다."; return; }
+  var to = "http://127.0.0.1:8787/cb?code=" + encodeURIComponent(code) + "&state=" + encodeURIComponent(q.get("state") || "");
+  setTimeout(function(){ document.getElementById("fallback").style.display = "block"; }, 4000);
+  location.replace(to);
+})();
+</script>
+</body></html>
